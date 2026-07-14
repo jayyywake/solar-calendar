@@ -5,12 +5,11 @@ from astral.sun import sun
 from ics import Calendar, Event
 
 # --- CONFIGURATION ---
-# Replace these with your exact target coordinates and timezone
 LATITUDE = 45.487
 LONGITUDE = -122.804
 TIMEZONE = "America/Los_Angeles"
 LOCATION_NAME = "Beaverton"
-DAYS_AHEAD = 1800  # A 1-year rolling window keeps the sync incredibly fast
+DAYS_AHEAD = 1826  # 5-year rolling window
 
 def generate_solar_calendar():
     loc = LocationInfo(LOCATION_NAME, "", TIMEZONE, LATITUDE, LONGITUDE)
@@ -18,43 +17,50 @@ def generate_solar_calendar():
     cal = Calendar()
     
     today = datetime.date.today()
-    print(f"Generating sunrise/sunset calendar for {LOCATION_NAME}...")
+    print(f"Generating 5-year solar calendar (with Zenith) for {LOCATION_NAME}...")
     
     for i in range(DAYS_AHEAD):
         current_day = today + datetime.timedelta(days=i)
         
         try:
-            # Calculate solar events for the day
             s = sun(loc.observer, date=current_day, tzinfo=tz)
             sunrise = s['sunrise']
+            solar_noon = s['noon']  # Added: Exact solar transit / zenith moment
             sunset = s['sunset']
         except Exception:
-            # Handles edge cases for extreme polar regions where the sun doesn't rise/set
             continue
             
-        # 1. Create Sunrise Event (15-minute visual block on your grid)
+        # 1. Sunrise Event (15-minute block)
         e_sunrise = Event(
-            name="☀️⬆️ Sunrise",
+            name="🌅 Sunrise",
             begin=sunrise,
             end=sunrise + datetime.timedelta(minutes=15),
             description=f"Sunrise in {LOCATION_NAME}: {sunrise.strftime('%I:%M %p')}"
         )
         cal.events.add(e_sunrise)
         
-        # 2. Create Sunset Event (15-minute visual block on your grid)
+        # 2. Solar Noon / Zenith Event (15-minute block)
+        e_noon = Event(
+            name="☀️ Solar Noon",
+            begin=solar_noon,
+            end=solar_noon + datetime.timedelta(minutes=15),
+            description=f"Solar Zenith (Highest point) in {LOCATION_NAME}: {solar_noon.strftime('%I:%M %p')}"
+        )
+        cal.events.add(e_noon)
+        
+        # 3. Sunset Event (15-minute block)
         e_sunset = Event(
-            name="☀️⬇️ Sunset",
+            name="🌇 Sunset",
             begin=sunset,
             end=sunset + datetime.timedelta(minutes=15),
             description=f"Sunset in {LOCATION_NAME}: {sunset.strftime('%I:%M %p')}"
         )
         cal.events.add(e_sunset)
         
-    # Write the compiled data out to the ICS file
     filename = "sunrise_sunset.ics"
     with open(filename, "w", encoding="utf-8") as f:
         f.writelines(cal.serialize_iter())
-    print(f"Successfully saved {filename}")
+    print(f"Successfully saved {filename} with 5 years of solar data including Zenith.")
 
 if __name__ == "__main__":
     generate_solar_calendar()
