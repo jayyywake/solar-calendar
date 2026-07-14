@@ -32,7 +32,7 @@ def generate_solar_calendar():
             
         # 1. Sunrise Event (15-minute block)
         e_sunrise = Event(
-            name="🌅 Sunrise",
+            name="☀️⬆️ Sunrise",
             begin=sunrise,
             end=sunrise + datetime.timedelta(minutes=15),
             description=f"Sunrise in {LOCATION_NAME}: {sunrise.strftime('%I:%M %p')}"
@@ -50,7 +50,7 @@ def generate_solar_calendar():
         
         # 3. Sunset Event (15-minute block)
         e_sunset = Event(
-            name="🌇 Sunset",
+            name="☀️⬇️ Sunset",
             begin=sunset,
             end=sunset + datetime.timedelta(minutes=15),
             description=f"Sunset in {LOCATION_NAME}: {sunset.strftime('%I:%M %p')}"
