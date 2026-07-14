@@ -10,7 +10,7 @@ LATITUDE = 45.487
 LONGITUDE = -122.804
 TIMEZONE = "America/Los_Angeles"
 LOCATION_NAME = "Beaverton"
-DAYS_AHEAD = 365  # A 1-year rolling window keeps the sync incredibly fast
+DAYS_AHEAD = 1800  # A 1-year rolling window keeps the sync incredibly fast
 
 def generate_solar_calendar():
     loc = LocationInfo(LOCATION_NAME, "", TIMEZONE, LATITUDE, LONGITUDE)
